@@ -40,7 +40,7 @@ app.get("/v1", (req, resp) => {
         const image = $(this).find("img").attr("data-src");
         const link = $(this).find("a").attr("href");
         const imdb = link.split("/view/")[1];
-        const url = 'http://localhost:8000/v1/' + imdb
+        const url = 'https://movie-api-65n7.onrender.com/v1/' + imdb
         thumbnails.push({
           image,
           imdb,

@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 
 const url = "https://2embed.org/library";
 const movie = "https://2embed.org/view/";
-const thumbnails = [];
+
 // SET UP
 const app = express();
 
@@ -28,7 +28,8 @@ app.use(
 //function get
 
 app.get("/v1", (req, resp) => {
-  const limit = Number(req.query.limit);
+  const limit = Number(req.query.limit); // chia page // 240 = 10 page => limit = [24,48,...240] <=> page1,page2,page3
+  const thumbnails = []; //240 => 0 -> 239 // page 1 : limit = 23
   try {
     axios(url, {
       headers: { "Accept-Encoding": "gzip,deflate,compress" },
@@ -46,11 +47,12 @@ app.get("/v1", (req, resp) => {
           url,
         });
       });
-       console.log(thumbnails.length);
+      
       if (limit && limit > 0) {
         //
-       
-        resp.status(200).json(thumbnails.slice(0, limit));
+        let start = limit - 24;
+    
+        limit <= 24 ? resp.status(200).json(thumbnails.slice(0, limit)) :  resp.status(200).json(thumbnails.slice(start, limit - 1))
         
       } else {
 
@@ -61,26 +63,8 @@ app.get("/v1", (req, resp) => {
     resp.status(500).json(err);
   }
 });
-const page = (page,start,end) => {
-  app.get(`/v1/page${page}`, (req, resp) => {
-    try {
-      resp.status(200).json(thumbnails.splice(start,end));
-    } catch (error) {
-      resp.status(500).json(err);
-    }
-  });
-}
 
-page(1,0,23)
-page(2,23,47)
-page(3,47,71)
-page(4,71,95)
-page(5,71,119)
-page(6,119,143)
-page(7,143,167)
-page(8,167,191)
-page(9,191,215)
-page(10,215,239)
+
 app.get(`/v1/:character`, (req, resp) => {
   let url = movie + req.params.character;
   const thumbnails = [];

@@ -73,8 +73,10 @@ app.get(`/v1/:character`, (req, resp) => {
       headers: { "Accept-Encoding": "gzip,deflate,compress" },
     }).then((res) => {
       const html = res.data;
+      
       const $ = cheerio.load(html);
       const name = $(".heading-large").text();
+      const image = $('.film-poster').find('img').attr('src');
       const description = $(".description").text().trim();
       const film = `https://2embed.org/embed/movie?imdb=${req.params.character}`
       const titles = [];
@@ -84,7 +86,7 @@ app.get(`/v1/:character`, (req, resp) => {
             value
         )
       })
-      thumbnails.push({ name , description ,titles,film });
+      thumbnails.push({ name , description ,titles,film,image });
       resp.status(200).json(thumbnails);
     });
   } catch (error) {
